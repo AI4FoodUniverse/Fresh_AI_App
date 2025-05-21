@@ -467,3 +467,23 @@ df_weights["bias"] = biases
 df_weights.to_csv(os.path.join(output_dir, "classifier_weights.csv"), index=False)
 
 print(f"✅ Final evaluation artifacts saved to folder: '{output_dir}/'")
+
+# Plot Train vs Validation Loss
+plt.figure(figsize=(10, 6))
+
+# Group by epoch and average train loss (since you log per batch)
+train_loss_per_epoch = df_train_log.groupby('epoch')['train_loss'].mean()
+val_loss_per_epoch = df_val_log.set_index('epoch')['val_loss']
+
+plt.plot(train_loss_per_epoch.index, train_loss_per_epoch.values, label='Train Loss', marker='o')
+plt.plot(val_loss_per_epoch.index, val_loss_per_epoch.values, label='Validation Loss', marker='x')
+
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training vs Validation Loss')
+plt.legend()
+plt.grid(True)
+
+loss_plot_path = os.path.join(output_dir, "train_val_loss.png")
+plt.savefig(loss_plot_path)
+plt.show()
